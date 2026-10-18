@@ -1,0 +1,28 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+env/
+
+# 打包产物与中间文件（exe 体积大，不放仓库）
+dist/
+build/_work/
+build/_build/
+*.spec.bak
+
+# 下载的内容、日志与个人配置
+downloads/
+*.log
+.x_downloader_config.json
+cookies.txt
+cookies*.txt
+
+# 本地工作区数据
+.workbuddy/
+
+# 系统文件
+Thumbs.db
+desktop.ini
+.DS_Store
