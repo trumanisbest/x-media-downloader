@@ -10,6 +10,7 @@ env/
 dist/
 build/_work/
 build/_build/
+build/tools/
 *.spec.bak
 
 # 下载的内容、日志与个人配置

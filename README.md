@@ -36,21 +36,31 @@ macOS 风格侧边栏分栏布局：
 
 ## 运行方式
 
-### 桌面版（推荐）
+### 安装版（推荐）
 
-下载 Release 里的 `XMediaDownloader` 压缩包，解压后双击 `XMediaDownloader.exe`。
+1. 下载 Release 里的 `XMediaDownloader-Setup-v1.1.0.exe`
+2. 双击安装，向导全中文，默认装到 `%LOCALAPPDATA%\Programs\XMediaDownloader`（**不需要管理员权限**）
+3. 勾选「创建桌面快捷方式」→ 安装完桌面上就有「X 媒体下载器」图标
+4. 卸载：控制面板 → 「X 媒体下载器」，或开始菜单里的「卸载 X 媒体下载器」。
+   卸载会清理程序文件、快捷方式与注册表项，但**保留你的配置和已下载内容**，重装后设置还在
 
-目录说明：
+批量静默安装（给企业部署用）：
+
+```bash
+XMediaDownloader-Setup-v1.1.0.exe /VERYSILENT /SUPPRESSMSGBOXES /NORESTART
+```
+
+### 绿色版（免安装）
+
+Release 里的 `XMediaDownloader-v1.1.0-windows-x64.zip` 解压即用。必须**整个文件夹一起解压**，
+`gdl.exe` 与 `_internal/` 不能丢；换位置后桌面图标会失效，重建快捷方式即可。
 
 ```
 XMediaDownloader.exe   主程序（无黑框）
 gdl.exe                内置下载引擎（后台子进程）
 _internal/             运行库
-app.ico                程序图标
+使用说明.txt / app.ico
 ```
-
-卸载：删除整个文件夹 + 快捷方式即可，不写注册表。配置在
-`%APPDATA%\XMediaDownloader\.x_downloader_config.json`。
 
 ### 源码运行
 
@@ -61,7 +71,9 @@ python x_media_downloader.py
 
 Windows 也可直接双击 `启动下载器.bat`（自动检测 Python / tkinter 并安装 gallery-dl）。
 
-## 自行打包 exe
+## 自行构建
+
+### 打包 exe（PyInstaller）
 
 ```bash
 pip install pyinstaller pillow gallery-dl
@@ -74,6 +86,23 @@ pyinstaller build/XMediaDownloader.spec --noconfirm --distpath dist --workpath b
 - `gdl.exe` 必须是 **console 子系统**（GUI 子系统下 `sys.stdout` 为 None，读不到日志），主程序用 `STARTF_USESHOWWINDOW` 隐藏其窗口
 - gallery-dl 的 extractor / downloader 是动态导入，靠 `build/hook-gallery_dl.py` 收集子模块，否则 twitter 提取器会缺失
 - spec 里的路径相对 spec 所在目录，脚本中用 `SPECPATH` 拼绝对路径
+
+### 编译安装包（Inno Setup 6）
+
+```bash
+"C:\Program Files (x86)\Inno Setup 6\ISCC.exe" build\installer\XMediaDownloader.iss
+```
+
+产物在 `dist/XMediaDownloader-Setup-v<版本>.exe`。脚本要点：
+
+- `PrivilegesRequired=lowest` → 装到用户目录，免管理员权限
+- `[CustomMessages]` 的前缀必须与 `[Languages]` 里的 `Name` 完全一致（本项目为 `chinesesimplified.`），否则报 `Unknown language name`
+- 中文字体文件 `build/installer/ChineseSimplified.isl`（Inno 6 自带语言包里没有中文，需从社区翻译仓库取）
+- `VersionInfoInternalVersion` / `VersionInfoLegalCopyright` 是 Inno **7.x** 才支持的指令，Inno 6 下会报 `Unrecognized [Setup] section directive`
+
+## 许可证
+
+MIT，见 [LICENSE.txt](LICENSE.txt)。
 
 ## 免责声明
 
